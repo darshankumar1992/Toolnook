@@ -1,26 +1,143 @@
 @import "tailwindcss";
 
+/* `dark:` classes apply when <html data-theme="dark"> (set by the theme toggle), not by the OS setting. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Design tokens. Light (white) is the default; the toggle in the header switches to dark. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-2: #f4f6fb;
+  --text: #0f172a;
+  --muted: #526077;
+  --border: #e3e7f0;
+  --brand: #4f46e5;
+  --brand-hover: #4338ca;
+  --brand-soft: #eef0ff;
+  --brand-text: #3d36c4;
+  --on-brand: #ffffff;
+  --success: #15803d;
+  --success-soft: #e8f7ee;
+  --danger: #b91c1c;
+  --danger-soft: #fdecec;
+  --warning: #a16207;
+  --warning-soft: #fdf6e3;
+  --dot: #d9ddf0;
+}
+
+:root[data-theme="dark"] {
+  --bg: #0b1020;
+  --surface: #121a2e;
+  --surface-2: #19223b;
+  --text: #e6e9f2;
+  --muted: #9aa5bd;
+  --border: #253154;
+  --brand: #6d70f5;
+  --brand-hover: #8487f7;
+  --brand-soft: #1c2050;
+  --brand-text: #b4b7ff;
+  --on-brand: #ffffff;
+  --success: #4ade80;
+  --success-soft: #11291c;
+  --danger: #f87171;
+  --danger-soft: #361518;
+  --warning: #facc15;
+  --warning-soft: #2e260b;
+  --dot: #1f2a48;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-text: var(--brand-text);
+  --color-on-brand: var(--on-brand);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+html {
+  color-scheme: light;
+  /* Removes the double-tap-to-zoom wait on phones, so taps respond immediately. Pinch zoom still works. */
+  touch-action: manipulation;
+}
+
+/* Added for a single frame while the theme changes, so colours switch instantly instead of fading. */
+.no-transitions,
+.no-transitions *,
+.no-transitions *::before,
+.no-transitions *::after {
+  transition: none !important;
+}
+
+/* Top progress bar shown the moment a link is clicked. */
+@keyframes nav-progress {
+  from {
+    transform: scaleX(0.05);
   }
+  to {
+    transform: scaleX(0.9);
+  }
+}
+html[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Reusable component classes */
+
+@utility card {
+  @apply rounded-2xl border border-border bg-surface;
+}
+@utility btn {
+  @apply inline-flex touch-manipulation items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,scale] duration-100 select-none active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+}
+@utility btn-primary {
+  @apply btn bg-brand text-on-brand shadow-sm shadow-brand/30 hover:bg-brand-hover;
+}
+@utility btn-secondary {
+  @apply btn border border-border bg-surface text-text hover:bg-surface-2;
+}
+@utility input {
+  @apply w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-text outline-none transition placeholder:text-muted/70 focus:border-brand focus:ring-2 focus:ring-brand/25;
+}
+@utility label {
+  @apply mb-1.5 block text-sm font-medium text-text;
+}
+
+@layer components {
+  .prose-tool h2 {
+    @apply mt-10 mb-3 text-xl font-bold tracking-tight text-text;
+  }
+  .prose-tool p {
+    @apply mb-4 leading-7 text-muted;
+  }
+  .prose-tool ul {
+    @apply mb-4 list-disc space-y-1.5 pl-5 leading-7 text-muted;
+  }
+  .prose-tool ol {
+    @apply mb-4 list-decimal space-y-1.5 pl-5 leading-7 text-muted;
+  }
+  .prose-tool a {
+    @apply font-medium text-brand-text underline underline-offset-2;
+  }
+  .prose-tool strong {
+    @apply font-semibold text-text;
+  }
 }
